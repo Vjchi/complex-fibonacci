@@ -1,0 +1,29 @@
+sudo:required
+services:
+  - docker
+
+before_install:
+  - docker build -t vjchi/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=tru vjchi/react-test npm test
+
+after-success:
+  - docker build -t vjchi/multi-client ./client
+  - docker build -t vjchi/multi-nginx ./nginx
+  - docker build -t vjchi/multi-server ./server
+  - docker build -t vjchi/multi-worker ./worker
+  
+  # Log in to the Docker CLI
+  # Instead of directly using our username and password,
+  # Use encrypted credentials from TravisCI
+  - echo "$DOCKER_PASSWORD" | docker  login -u "$DOCKER_ID" --password-stdin
+
+  # Take those images and push them to DockerHub
+  - docker push vjchi/multi-client
+  - docker push vjchi/multi-nginx
+  - docker push vjchi/multi-server
+  - docker push vjchi/multi-worker
+
+
+
