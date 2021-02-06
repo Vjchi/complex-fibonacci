@@ -20,7 +20,20 @@
             "essential": false
         },
         {
-            
+            "name": "nginx",
+            "image": "multi-nginx",
+            "hostname": "nginx",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "links": [
+                "client",
+                "server"
+            ]
         }
     ]
 }
